@@ -1,0 +1,36 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: http://127.0.0.1:8080
+
+configuration:
+  templates:
+    - name: go
+      source: https://github.com/LucasRoesler/templates#feat-upgrade-golang-to-118-and-support-mod
+
+functions:
+  # straightforward module
+  tester:
+    lang: go
+    handler: ./tester
+    image: tester:latest
+    build_args:
+      GO111MODULE: on
+
+  # module with vendoring,
+  # seems to require disabling GO111MODULE
+  mitvendor:
+    lang: go
+    handler: ./mitvendor
+    image: mitvendor:latest
+    build_args:
+      GO111MODULE: off
+      GOFLAGS: "-mod=vendor"
+
+  # a module with a local replace
+  mitreplace:
+    lang: go
+    handler: ./mitreplace
+    image: mitreplace:latest
+    build_args:
+      GO111MODULE: on
